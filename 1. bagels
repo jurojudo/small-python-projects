@@ -1,0 +1,90 @@
+"""Bagels, by Al Sweigart al@inventwithpython.com
+A deductive logic game where you must guess a number based on clues.
+View this code at https://nostarch.com/big-book-small-python-projects
+A version of this game is featured in the book "Invent Your Own
+Computer Games with Python" https://nostarch.com/inventwithpython
+Tags: short, game, puzzle"""
+
+import random
+
+num_digits = 3
+max_guesses = 10
+
+
+def get_secret_num():
+    numbers = list('0123456789')
+    random.shuffle(numbers)
+
+    secret_num = ''
+    for i in range(num_digits):
+        secret_num += str(numbers[i])
+    return secret_num
+
+
+def get_clues(guess, secret_num):
+    if guess == secret_num:
+        print('You did it!')
+
+    clues = []
+    for i in range(num_digits):
+        if guess[i] == secret_num[i]:
+            clues.append('Fermi ')
+
+        elif guess[i] in secret_num:
+            clues.append('Pico ')
+
+    if len(clues) == 0:
+        return 'Bagels'
+
+    clues.sort()
+    return ''.join(clues)
+
+
+def main():
+    print('''Bagels, a deductive logic game.
+By Al Sweigart al@inventwithpython.com
+
+I am thinking of a {}-digit number with no repeated digits.
+Try to guess what it is. Here are some clues:
+When I say:     That means:
+Pico            One digit is correct but in the wrong position.
+Fermi           One digit is correct and in the right position.
+Bagels          No digit is correct.
+
+For example, if the secret number was 248 and your guess was 843, the 
+clues would be Fermi Pico'''.format(num_digits))
+
+    # Main game loop
+    while True:
+
+        secret_num = get_secret_num()
+        print('I have thought up a number.')
+        print('You have {} guesses to get it.'.format(max_guesses))
+
+        num_of_guesses = 1
+        while num_of_guesses <= max_guesses:
+            guess = ''
+            while len(guess) != num_digits or not guess.isdecimal():
+                print('Guess #{}'.format(num_of_guesses))
+                guess = input('> ')
+
+            clues = get_clues(guess, secret_num)
+            print(clues)
+            num_of_guesses += 1
+
+            if guess == secret_num:
+                break
+
+            if num_of_guesses > max_guesses:
+                print("You've ran out of guesses")
+                print("The answer was {}".format(secret_num))
+
+        print('Do you want to play again? (yes or no)')
+
+        if not input('> ').lower().startswith('y'):
+            break
+        print("Thanks for playing!")
+
+
+if __name__ == "__main__":
+    main()
